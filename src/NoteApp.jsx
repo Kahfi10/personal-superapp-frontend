@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Home,
   Search as SearchIcon,
@@ -77,7 +78,7 @@ const NoteApp = () => {
         master_password: newNoteMasterPassword,
       });
       
-      setSaveMessage('✓ Catatan berhasil disimpan dan dienkripsi!');
+      setSaveMessage('Catatan berhasil disimpan dan dienkripsi!');
       setNewNoteTitle('');
       setNewNoteContent('');
       setNewNoteMasterPassword('');
@@ -92,7 +93,7 @@ const NoteApp = () => {
       }, 2000);
       
     } catch (error) {
-      setSaveMessage('❌ Gagal menyimpan catatan: ' + (error.response?.data?.detail || error.message));
+      setSaveMessage('Gagal menyimpan catatan: ' + (error.response?.data?.detail || error.message));
     } finally {
       setSavingNote(false);
     }
@@ -122,7 +123,7 @@ const NoteApp = () => {
         setPendingEdit(false);
       }
     } catch (error) {
-      setDecryptError('❌ ' + (error.response?.data?.detail || 'Master password salah atau terjadi kesalahan'));
+      setDecryptError((error.response?.data?.detail || 'Master password salah atau terjadi kesalahan'));
     } finally {
       setDecryptingNote(false);
     }
@@ -180,7 +181,7 @@ const NoteApp = () => {
         master_password: editNoteMasterPassword,
       });
 
-      setEditMessage('✓ Catatan berhasil diupdate!');
+      setEditMessage('Catatan berhasil diupdate!');
       setDecryptedNote({
         ...decryptedNote,
         title: editNoteTitle,
@@ -194,7 +195,7 @@ const NoteApp = () => {
         setEditMessage('');
       }, 1200);
     } catch (error) {
-      setEditMessage('❌ Gagal update catatan: ' + (error.response?.data?.detail || error.message));
+      setEditMessage('Gagal update catatan: ' + (error.response?.data?.detail || error.message));
     } finally {
       setUpdatingNote(false);
     }
@@ -257,9 +258,11 @@ const NoteApp = () => {
               const Icon = item.icon;
               const isActive = activeSidebarItem === item.key;
               return (
-                <button
+                <motion.button
                   key={idx}
                   onClick={() => setActiveSidebarItem(item.key)}
+                  whileHover={{ x: isActive ? 0 : 3 }}
+                  whileTap={{ scale: 0.98 }}
                   className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${
                     isActive
                       ? 'bg-[#E7EAEC] text-[#545453] shadow-sm ring-1 ring-[#A8B0B5]'
@@ -268,7 +271,7 @@ const NoteApp = () => {
                 >
                   <Icon size={18} strokeWidth={1.9} />
                   <span className="text-base font-medium">{item.label}</span>
-                </button>
+                </motion.button>
               );
             })}
           </nav>
@@ -282,9 +285,11 @@ const NoteApp = () => {
               const Icon = item.icon;
               const isActive = activeSidebarItem === item.key;
               return (
-                <button
+                <motion.button
                   key={idx}
                   onClick={() => setActiveSidebarItem(item.key)}
+                  whileHover={{ x: isActive ? 0 : 3 }}
+                  whileTap={{ scale: 0.98 }}
                   className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${
                     isActive
                       ? 'bg-[#E7EAEC] text-[#545453] shadow-sm ring-1 ring-[#A8B0B5]'
@@ -293,21 +298,23 @@ const NoteApp = () => {
                 >
                   <Icon size={18} strokeWidth={1.9} />
                   <span className="text-base font-medium">{item.label}</span>
-                </button>
+                </motion.button>
               );
             })}
           </nav>
         </div>
 
         {/* New Page Button */}
-        <button 
+        <motion.button 
           onClick={handleNewNote}
+          whileHover={{ scale: 1.15 }}
+          whileTap={{ scale: 0.9 }}
           className="w-11 h-11 mx-auto rounded-full bg-[#545453] text-[#E7EAEC] flex items-center justify-center hover:bg-[#6A7276] transition-colors"
           title="New Note"
           aria-label="New Note"
         >
           <Plus size={18} strokeWidth={2} />
-        </button>
+        </motion.button>
       </div>
 
       {/* ===== MIDDLE COLUMN ===== */}
@@ -315,7 +322,7 @@ const NoteApp = () => {
         {/* Search Bar */}
         <div className="mb-6">
           <div className="relative">
-            <SearchIcon size={16} className="absolute left-3 top-1/2 transform -translate-y-1/2 text-[#8D979A]" />
+            <SearchIcon size={16} className="absolute left-1 top-1/2 transform -translate-y-1/2 text-[#8D979A]" />
             <input
               type="text"
               placeholder="Search notes..."
@@ -334,62 +341,81 @@ const NoteApp = () => {
               <span className="text-base">Loading notes...</span>
             </div>
           ) : filteredNotes.length === 0 ? (
-            <div className="text-center py-8 text-[#6E777B]">
+            <motion.div 
+              initial={{ opacity: 0 }} 
+              animate={{ opacity: 1 }} 
+              className="text-base text-center py-8 text-[#6E777B]"
+            >
               <p className="text-base">
                 {searchQuery ? 'No notes found' : 'No notes yet. Create your first note!'}
               </p>
-            </div>
+            </motion.div>
           ) : (
-            filteredNotes.map((note) => {
-              const isActiveNote = activeCard === note.id;
-              return (
-                <div
-                  key={note.id}
-                  className={`w-full p-4 rounded-2xl transition-all ${
-                    isActiveNote ? 'bg-[#8D979A] text-[#E7EAEC]' : 'bg-transparent hover:bg-[#D0D4D8]'
-                  }`}
-                >
-                  <button
-                    onClick={() => handleSelectNote(note.id)}
-                    className="w-full text-left"
+            <AnimatePresence>
+              {filteredNotes.map((note, idx) => {
+                const isActiveNote = activeCard === note.id;
+                return (
+                  <motion.div
+                    key={note.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.2, delay: idx * 0.05 }}
+                    className={`w-full p-4 rounded-2xl transition-all ${
+                      isActiveNote ? 'bg-[#8D979A] text-[#E7EAEC]' : 'bg-transparent hover:bg-[#D0D4D8]'
+                    }`}
                   >
-                    <h3 className={`font-semibold text-base mb-2 ${isActiveNote ? 'text-[#E7EAEC]' : 'text-[#545453]'}`}>
-                      {note.title}
-                    </h3>
-                    <p className={`text-sm ${isActiveNote ? 'text-[#D0D4D8]' : 'text-[#8D979A]'}`}>
-                      {note.date}
-                    </p>
-                  </button>
+                    <button
+                      onClick={() => handleSelectNote(note.id)}
+                      className="w-full text-left"
+                    >
+                      <h3 className={`font-semibold text-lg mb-2 ${isActiveNote ? 'text-[#E7EAEC]' : 'text-[#545453]'}`}>
+                        {note.title}
+                      </h3>
+                      <p className={`text-base ${isActiveNote ? 'text-[#D0D4D8]' : 'text-[#8D979A]'}`}>
+                        {note.date}
+                      </p>
+                    </button>
 
-                  <div className="mt-3 flex justify-end gap-1.5">
-                    <button
-                      onClick={() => handleSelectNote(note.id, true)}
-                      className={`p-1.5 rounded-md transition-colors ${
-                        isActiveNote
-                          ? 'hover:bg-[#6A7276] text-[#E7EAEC]'
-                          : 'hover:bg-[#C0C7CC] text-[#6E777B]'
-                      }`}
-                      title="Edit"
-                      aria-label="Edit"
+                    <motion.div 
+                      className="mt-3 flex justify-end gap-1.5"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.1 }}
                     >
-                      <Pencil size={15} />
-                    </button>
-                    <button
-                      onClick={() => handleDeleteNote(note.id)}
-                      className={`p-1.5 rounded-md transition-colors ${
-                        isActiveNote
-                          ? 'hover:bg-[#6A7276] text-[#E7EAEC]'
-                          : 'hover:bg-[#C0C7CC] text-[#6E777B]'
-                      }`}
-                      title="Delete"
-                      aria-label="Delete"
-                    >
-                      <Trash2 size={15} />
-                    </button>
-                  </div>
-                </div>
-              );
-            })
+                      <motion.button
+                        onClick={() => handleSelectNote(note.id, true)}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                        className={`p-1.5 rounded-md transition-colors ${
+                          isActiveNote
+                            ? 'hover:bg-[#6A7276] text-[#E7EAEC]'
+                            : 'hover:bg-[#C0C7CC] text-[#6E777B]'
+                        }`}
+                        title="Edit"
+                        aria-label="Edit"
+                      >
+                        <Pencil size={15} />
+                      </motion.button>
+                      <motion.button
+                        onClick={() => handleDeleteNote(note.id)}
+                        whileHover={{ scale: 1.1 }}
+                        whileTap={{ scale: 0.95 }}
+                        className={`p-1.5 rounded-md transition-colors ${
+                          isActiveNote
+                            ? 'hover:bg-[#6A7276] text-[#E7EAEC]'
+                            : 'hover:bg-[#C0C7CC] text-[#6E777B]'
+                        }`}
+                        title="Delete"
+                        aria-label="Delete"
+                      >
+                        <Trash2 size={15} />
+                      </motion.button>
+                    </motion.div>
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
           )}
         </div>
       </div>
@@ -397,22 +423,44 @@ const NoteApp = () => {
       {/* ===== RIGHT COLUMN / EDITOR AREA ===== */}
       <div className="flex-1 bg-[#E7EAEC] flex flex-col relative overflow-hidden">
         {/* Top Right Navigation */}
-        <div className="flex items-center justify-end gap-4 p-6 border-b border-[#A8B0B5]">
-          <span className="text-base font-medium text-[#6E777B] cursor-pointer hover:text-[#545453]">Updates</span>
-          <span className="text-base font-medium text-[#6E777B] cursor-pointer hover:text-[#545453]">Share</span>
+        <motion.div 
+          className="flex items-center justify-end gap-4 p-6 border-b border-[#A8B0B5]"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <motion.span 
+            whileHover={{ scale: 1.05 }}
+            className="text-base font-medium text-[#6E777B] cursor-pointer hover:text-[#545453]"
+          >Updates</motion.span>
+          <motion.span 
+            whileHover={{ scale: 1.05 }}
+            className="text-base font-medium text-[#6E777B] cursor-pointer hover:text-[#545453]"
+          >Share</motion.span>
 
-          <button className="p-1.5 hover:bg-[#D0D4D8] rounded-lg transition-colors">
+          <motion.button 
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            className="p-1.5 hover:bg-[#D0D4D8] rounded-lg transition-colors"
+          >
             <MoreVertical size={18} className="text-[#6E777B]" />
-          </button>
-        </div>
+          </motion.button>
+        </motion.div>
 
         {/* Editor Content - Dynamic based on state */}
         <div className="flex-1 overflow-y-auto flex items-start justify-center pt-12 pb-20">
           <div className="max-w-3xl w-full px-8">
+            <AnimatePresence mode="wait">
             
-            {/* View: New Note Form */}
-            {showNewNoteForm && (
-              <div>
+              {/* View: New Note Form */}
+              {showNewNoteForm && (
+              <motion.div
+                key="new-note-form"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3 }}
+              >
                 <h1 className="text-4xl font-bold text-[#545453] mb-3">Create New Note</h1>
                 <p className="text-lg text-[#6E777B] mb-8">Your note will be encrypted with your master password</p>
 
@@ -441,7 +489,7 @@ const NoteApp = () => {
 
                   <div className="border-t-2 border-[#C0C7CC] pt-6">
                     <label className="block text-base font-medium text-[#545453] mb-2">
-                      🔒 Master Password
+                      Master Password
                     </label>
                     <input
                       type="password"
@@ -457,9 +505,11 @@ const NoteApp = () => {
                   </div>
 
                   <div className="flex gap-3">
-                    <button
+                    <motion.button
                       type="submit"
                       disabled={savingNote}
+                      whileHover={{ scale: savingNote ? 1 : 1.02 }}
+                      whileTap={{ scale: savingNote ? 1 : 0.98 }}
                       className="flex-1 bg-[#545453] text-[#E7EAEC] py-3 px-6 rounded-lg font-medium hover:bg-[#6A7276] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
                     >
                       {savingNote ? (
@@ -470,14 +520,16 @@ const NoteApp = () => {
                       ) : (
                         <>Save & Encrypt</>
                       )}
-                    </button>
-                    <button
+                    </motion.button>
+                    <motion.button
                       type="button"
                       onClick={() => setShowNewNoteForm(false)}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
                       className="px-6 py-3 border-2 border-[#A8B0B5] rounded-lg font-medium hover:bg-[#D0D4D8] transition-colors"
                     >
                       Cancel
-                    </button>
+                    </motion.button>
                   </div>
 
                   {saveMessage && (
@@ -486,19 +538,25 @@ const NoteApp = () => {
                     </div>
                   )}
                 </form>
-              </div>
-            )}
+              </motion.div>
+              )}
 
-            {/* View: Decrypt Note Form */}
-            {!showNewNoteForm && activeCard && !decryptedNote && (
-              <div>
+              {/* View: Decrypt Note Form */}
+              {!showNewNoteForm && activeCard && !decryptedNote && (
+              <motion.div
+                key="decrypt-form"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3 }}
+              >
                 <h1 className="text-4xl font-bold text-[#545453] mb-3">Unlock Note</h1>
                 <p className="text-lg text-[#6E777B] mb-8">Enter your master password to decrypt this note</p>
 
                 <form onSubmit={handleDecryptNote} className="space-y-6">
                   <div>
                     <label className="block text-base font-medium text-[#545453] mb-2">
-                      🔒 Master Password
+                      Master Password
                     </label>
                     <input
                       type="password"
@@ -511,9 +569,11 @@ const NoteApp = () => {
                   </div>
 
                   <div className="flex gap-3">
-                    <button
+                    <motion.button
                       type="submit"
                       disabled={decryptingNote}
+                      whileHover={{ scale: decryptingNote ? 1 : 1.02 }}
+                      whileTap={{ scale: decryptingNote ? 1 : 0.98 }}
                       className="flex-1 bg-[#545453] text-[#E7EAEC] py-3 px-6 rounded-lg font-medium hover:bg-[#6A7276] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
                     >
                       {decryptingNote ? (
@@ -524,14 +584,16 @@ const NoteApp = () => {
                       ) : (
                         <>Unlock Note</>
                       )}
-                    </button>
-                    <button
+                    </motion.button>
+                    <motion.button
                       type="button"
                       onClick={handleBackToList}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
                       className="px-6 py-3 border-2 border-[#A8B0B5] rounded-lg font-medium hover:bg-[#D0D4D8] transition-colors"
                     >
                       Back
-                    </button>
+                    </motion.button>
                   </div>
 
                   {decryptError && (
@@ -540,12 +602,18 @@ const NoteApp = () => {
                     </div>
                   )}
                 </form>
-              </div>
-            )}
+              </motion.div>
+              )}
 
-            {/* View: Edit Note Form */}
-            {!showNewNoteForm && showEditNoteForm && (
-              <div>
+              {/* View: Edit Note Form */}
+              {!showNewNoteForm && showEditNoteForm && (
+              <motion.div
+                key="edit-form"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3 }}
+              >
                 <h1 className="text-4xl font-bold text-[#545453] mb-3">Edit Note</h1>
                 <p className="text-lg text-[#6E777B] mb-8">Update note lalu enkripsi lagi dengan master password</p>
 
@@ -574,7 +642,7 @@ const NoteApp = () => {
 
                   <div className="border-t-2 border-[#C0C7CC] pt-6">
                     <label className="block text-base font-medium text-[#545453] mb-2">
-                      🔒 Master Password
+                      Master Password
                     </label>
                     <input
                       type="password"
@@ -587,9 +655,11 @@ const NoteApp = () => {
                   </div>
 
                   <div className="flex gap-3">
-                    <button
+                    <motion.button
                       type="submit"
                       disabled={updatingNote}
+                      whileHover={{ scale: updatingNote ? 1 : 1.02 }}
+                      whileTap={{ scale: updatingNote ? 1 : 0.98 }}
                       className="flex-1 bg-[#545453] text-[#E7EAEC] py-3 px-6 rounded-lg font-medium hover:bg-[#6A7276] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
                     >
                       {updatingNote ? (
@@ -600,17 +670,19 @@ const NoteApp = () => {
                       ) : (
                         <>Save Changes</>
                       )}
-                    </button>
-                    <button
+                    </motion.button>
+                    <motion.button
                       type="button"
                       onClick={() => {
                         setShowEditNoteForm(false);
                         setEditMessage('');
                       }}
+                      whileHover={{ scale: 1.02 }}
+                      whileTap={{ scale: 0.98 }}
                       className="px-6 py-3 border-2 border-[#A8B0B5] rounded-lg font-medium hover:bg-[#D0D4D8] transition-colors"
                     >
                       Cancel
-                    </button>
+                    </motion.button>
                   </div>
 
                   {editMessage && (
@@ -619,31 +691,41 @@ const NoteApp = () => {
                     </div>
                   )}
                 </form>
-              </div>
-            )}
+              </motion.div>
+              )}
 
-            {/* View: Decrypted Note Content */}
-            {!showNewNoteForm && !showEditNoteForm && decryptedNote && (
-              <div>
+              {/* View: Decrypted Note Content */}
+              {!showNewNoteForm && !showEditNoteForm && decryptedNote && (
+              <motion.div
+                key="note-content"
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ duration: 0.3 }}
+              >
                 <div className="flex items-start justify-between gap-4 mb-6">
                   <h1 className="text-4xl font-bold text-[#545453]">
                     {decryptedNote.title}
                   </h1>
                   <div className="flex items-center gap-2">
-                    <button
+                    <motion.button
                       onClick={handleStartEditNote}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
                       className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-[#A8B0B5] text-[#545453] hover:bg-[#D0D4D8] transition-colors"
                     >
                       <Pencil size={16} />
                       Edit
-                    </button>
-                    <button
+                    </motion.button>
+                    <motion.button
                       onClick={() => handleDeleteNote(activeCard)}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
                       className="inline-flex items-center gap-1.5 px-3 py-2 rounded-lg border border-[#8D979A] text-[#545453] hover:bg-[#D0D4D8] transition-colors"
                     >
                       <Trash2 size={16} />
                       Delete
-                    </button>
+                    </motion.button>
                   </div>
                 </div>
 
@@ -656,35 +738,46 @@ const NoteApp = () => {
                 </div>
 
                 <div className="mt-8">
-                  <button
+                  <motion.button
                     onClick={handleBackToList}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
                     className="px-6 py-3 border-2 border-[#A8B0B5] rounded-lg font-medium hover:bg-[#D0D4D8] transition-colors"
                   >
-                    ← Back to Notes
-                  </button>
+                    Back to Notes
+                  </motion.button>
                 </div>
-              </div>
-            )}
+              </motion.div>
+              )}
 
-            {/* View: Welcome/Empty State */}
-            {!showNewNoteForm && !showEditNoteForm && !activeCard && (
-              <div className="text-center py-20">
-                <div className="text-6xl mb-6">📝</div>
+              {/* View: Welcome/Empty State */}
+              {!showNewNoteForm && !showEditNoteForm && !activeCard && (
+              <motion.div
+                key="welcome"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.3 }}
+                className="text-center py-20"
+              >
                 <h1 className="text-4xl font-bold text-[#545453] mb-4">
                   Welcome to Secure Notes
                 </h1>
                 <p className="text-[#6E777B] text-lg mb-8">
                   Create a new encrypted note or select one from the list
                 </p>
-                <button
+                <motion.button
                   onClick={handleNewNote}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
                   className="inline-flex items-center gap-2 bg-[#545453] text-[#E7EAEC] py-3 px-8 rounded-lg font-medium hover:bg-[#6A7276] transition-colors"
                 >
                   <Plus size={20} />
                   Create Your First Note
-                </button>
-              </div>
-            )}
+                </motion.button>
+              </motion.div>
+              )}
+            </AnimatePresence>
 
           </div>
         </div>
