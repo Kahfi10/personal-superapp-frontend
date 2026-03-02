@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion as Motion } from 'framer-motion';
 import {
-  Home,
   Music,
   Image as ImageIcon,
   FileText,
@@ -28,28 +27,36 @@ const Dashboard = () => {
   const [loadingStats, setLoadingStats] = useState(true);
 
   useEffect(() => {
-    fetchDashboardData();
-  }, []);
+    let isActive = true;
 
-  const fetchDashboardData = async () => {
-    try {
-      setLoadingStats(true);
-      const notesResponse = await axios.get(`${API_BASE_URL}/notes/`);
-      const notes = notesResponse.data.notes || [];
-      
-      setStats({
-        totalNotes: notes.length,
-        totalSongs: 0, // API musik belum fully integrated
-        totalPhotos: 0, // API foto belum fully integrated
+    axios
+      .get(`${API_BASE_URL}/notes/`)
+      .then((notesResponse) => {
+        if (!isActive) return;
+        const notes = notesResponse.data.notes || [];
+
+        setStats({
+          totalNotes: notes.length,
+          totalSongs: 0,
+          totalPhotos: 0,
+        });
+
+        setRecentNotes(notes.slice(0, 3));
+      })
+      .catch((error) => {
+        if (!isActive) return;
+        console.error('Error fetching dashboard data:', error);
+      })
+      .finally(() => {
+        if (isActive) {
+          setLoadingStats(false);
+        }
       });
-      
-      setRecentNotes(notes.slice(0, 3));
-      setLoadingStats(false);
-    } catch (error) {
-      console.error('Error fetching dashboard data:', error);
-      setLoadingStats(false);
-    }
-  };
+
+    return () => {
+      isActive = false;
+    };
+  }, []);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -115,14 +122,14 @@ const Dashboard = () => {
               <h1 className="text-4xl font-bold text-[#545453]">My Workspace</h1>
               <p className="text-[#6E777B] mt-2">Selamat datang kembali</p>
             </div>
-            <motion.button
+            <Motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => navigate('/settings')}
               className="p-3 rounded-full bg-[#D0D4D8] hover:bg-[#A8B0B5] transition-colors"
             >
               <Settings size={24} className="text-[#545453]" />
-            </motion.button>
+            </Motion.button>
           </div>
         </div>
       </div>
@@ -130,7 +137,7 @@ const Dashboard = () => {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-12">
         {/* Quick Stats */}
-        <motion.div
+        <Motion.div
           className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12"
           variants={containerVariants}
           initial="hidden"
@@ -139,7 +146,7 @@ const Dashboard = () => {
           {features.map((feature) => {
             const IconComponent = feature.icon;
             return (
-              <motion.div
+              <Motion.div
                 key={feature.id}
                 variants={itemVariants}
                 whileHover={{ y: -8, transition: { type: 'spring', stiffness: 400, damping: 10 } }}
@@ -152,19 +159,19 @@ const Dashboard = () => {
                 <p className="text-[#6E777B] text-sm mb-4">{feature.description}</p>
                 <div className="flex items-center justify-between">
                   <span className="text-2xl font-bold text-[#8D979A]">{feature.count}</span>
-                  <motion.button
+                  <Motion.button
                     whileHover={{ scale: 1.15, x: 5, transition: { type: 'spring', stiffness: 400, damping: 10 } }}
                     whileTap={{ scale: 0.92 }}
                     onClick={feature.action}
                     className="p-2 rounded-lg bg-[#D0D4D8] hover:bg-[#A8B0B5] transition-colors"
                   >
                     <ChevronRight size={20} className="text-[#545453]" />
-                  </motion.button>
+                  </Motion.button>
                 </div>
-              </motion.div>
+              </Motion.div>
             );
           })}
-        </motion.div>
+        </Motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main Features Grid */}
@@ -178,7 +185,7 @@ const Dashboard = () => {
                 {features.map((feature, idx) => {
                   const IconComponent = feature.icon;
                   return (
-                    <motion.div
+                    <Motion.div
                       key={feature.id}
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
@@ -193,7 +200,7 @@ const Dashboard = () => {
                         <h3 className="font-semibold text-[#545453]">{feature.title}</h3>
                       </div>
                       <p className="text-sm text-[#6E777B]">{feature.description}</p>
-                    </motion.div>
+                    </Motion.div>
                   );
                 })}
               </div>
@@ -209,33 +216,33 @@ const Dashboard = () => {
                 Aksi Cepat
               </h3>
               <div className="space-y-2">
-                <motion.button
-                  whileHover={{ scale: 1.02, x: 5 }}
-                  whileTap={{ scale: 0.98 }}
+                <Motion.button
+                  whileHover={{ scale: 1.03, x: 5, transition: { type: 'spring', stiffness: 400, damping: 10 } }}
+                  whileTap={{ scale: 0.96 }}
                   onClick={() => navigate('/notes')}
                   className="w-full flex items-center gap-3 p-3 rounded-lg bg-[#D0D4D8] hover:bg-[#A8B0B5] transition-colors text-[#545453] font-medium"
                 >
                   <Plus size={20} />
                   Catatan Baru
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.02, x: 5 }}
-                  whileTap={{ scale: 0.98 }}
+                </Motion.button>
+                <Motion.button
+                  whileHover={{ scale: 1.03, x: 5, transition: { type: 'spring', stiffness: 400, damping: 10 } }}
+                  whileTap={{ scale: 0.96 }}
                   onClick={() => navigate('/music')}
                   className="w-full flex items-center gap-3 p-3 rounded-lg bg-[#D0D4D8] hover:bg-[#A8B0B5] transition-colors text-[#545453] font-medium"
                 >
                   <Plus size={20} />
                   Upload Musik
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.02, x: 5 }}
-                  whileTap={{ scale: 0.98 }}
+                </Motion.button>
+                <Motion.button
+                  whileHover={{ scale: 1.03, x: 5, transition: { type: 'spring', stiffness: 400, damping: 10 } }}
+                  whileTap={{ scale: 0.96 }}
                   onClick={() => navigate('/photos')}
                   className="w-full flex items-center gap-3 p-3 rounded-lg bg-[#D0D4D8] hover:bg-[#A8B0B5] transition-colors text-[#545453] font-medium"
                 >
                   <Plus size={20} />
                   Upload Foto
-                </motion.button>
+                </Motion.button>
               </div>
             </div>
 
@@ -253,16 +260,19 @@ const Dashboard = () => {
                 <p className="text-[#6E777B] text-sm">Belum ada catatan baru</p>
               ) : (
                 <div className="space-y-2 max-h-64 overflow-y-auto">
-                  {recentNotes.map((note) => (
-                    <motion.div
+                  {recentNotes.map((note, idx) => (
+                    <Motion.div
                       key={note.id}
-                      whileHover={{ x: 5 }}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: idx * 0.05 }}
+                      whileHover={{ x: 5, transition: { type: 'spring', stiffness: 400, damping: 10 } }}
                       className="p-3 rounded-lg bg-[#D0D4D8] hover:bg-[#A8B0B5] transition-colors cursor-pointer"
                       onClick={() => navigate('/notes')}
                     >
                       <p className="font-medium text-[#545453] text-sm truncate">{note.title || 'Untitled'}</p>
                       <p className="text-xs text-[#6E777B] mt-1">Catatan terenkripsi</p>
-                    </motion.div>
+                    </Motion.div>
                   ))}
                 </div>
               )}

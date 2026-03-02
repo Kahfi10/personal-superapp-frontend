@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion as Motion, AnimatePresence } from 'framer-motion';
 import {
   Home,
   Music,
@@ -45,16 +45,16 @@ function App() {
               {navItems.map((item) => {
                 const IconComponent = item.icon;
                 return (
-                  <motion.a
+                  <Motion.a
                     key={item.id}
                     href={item.path}
-                    whileHover={{ x: 5 }}
-                    whileTap={{ scale: 0.98 }}
+                    whileHover={{ x: 8, transition: { type: 'spring', stiffness: 400, damping: 12 } }}
+                    whileTap={{ scale: 0.96 }}
                     className="flex items-center gap-3 px-4 py-3 rounded-lg text-[#545453] hover:bg-[#D0D4D8] transition-all group"
                   >
                     <IconComponent size={20} className="group-hover:text-blue-600" />
                     <span className="font-medium">{item.label}</span>
-                  </motion.a>
+                  </Motion.a>
                 );
               })}
             </nav>
@@ -72,18 +72,18 @@ function App() {
         <AnimatePresence>
           {sidebarOpen && (
             <>
-              <motion.div
+              <Motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 onClick={() => setSidebarOpen(false)}
                 className="fixed inset-0 bg-black/30 z-30 md:hidden"
               />
-              <motion.div
+              <Motion.div
                 initial={{ x: -300 }}
                 animate={{ x: 0 }}
                 exit={{ x: -300 }}
-                transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                transition={{ type: 'spring', stiffness: 200, damping: 25, mass: 1 }}
                 className="fixed left-0 top-0 h-screen w-72 bg-white shadow-xl border-r border-[#D0D4D8] z-40"
               >
                 <div className="flex flex-col h-full p-6">
@@ -100,17 +100,17 @@ function App() {
                     {navItems.map((item) => {
                       const IconComponent = item.icon;
                       return (
-                        <motion.a
+                        <Motion.a
                           key={item.id}
                           href={item.path}
                           onClick={() => setSidebarOpen(false)}
-                          whileHover={{ x: 5 }}
-                          whileTap={{ scale: 0.98 }}
+                          whileHover={{ x: 8, transition: { type: 'spring', stiffness: 400, damping: 12 } }}
+                          whileTap={{ scale: 0.96 }}
                           className="flex items-center gap-3 px-4 py-3 rounded-lg text-[#545453] hover:bg-[#D0D4D8] transition-all group"
                         >
                           <IconComponent size={20} className="group-hover:text-blue-600" />
                           <span className="font-medium">{item.label}</span>
-                        </motion.a>
+                        </Motion.a>
                       );
                     })}
                   </nav>
@@ -122,7 +122,7 @@ function App() {
                     </p>
                   </div>
                 </div>
-              </motion.div>
+              </Motion.div>
             </>
           )}
         </AnimatePresence>
@@ -131,9 +131,9 @@ function App() {
         <div className="flex-1 flex flex-col">
           {/* Top Bar */}
           <div className="bg-white shadow-sm border-b border-[#D0D4D8] px-6 py-4 flex items-center gap-4">
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.95 }}
+            <Motion.button
+              whileHover={{ scale: 1.12, transition: { type: 'spring', stiffness: 400, damping: 10 } }}
+              whileTap={{ scale: 0.92 }}
               onClick={() => setSidebarOpen(!sidebarOpen)}
               className="p-2 rounded-lg hover:bg-[#D0D4D8] transition-colors md:hidden"
             >
@@ -142,7 +142,7 @@ function App() {
               ) : (
                 <Menu size={24} className="text-[#545453]" />
               )}
-            </motion.button>
+            </Motion.button>
             <div className="flex-1" />
             <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500"></div>
           </div>
