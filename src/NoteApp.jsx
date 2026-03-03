@@ -26,7 +26,6 @@ const API_BASE_URL = 'http://localhost:8000';
 
 const NoteApp = () => {
   const [activeCard, setActiveCard] = useState(null);
-  const [activeSidebarItem, setActiveSidebarItem] = useState('home');
   const [activePage, setActivePage] = useState('notes'); // 'notes', 'music', 'photos'
   const [searchQuery, setSearchQuery] = useState('');
   const [notes, setNotes] = useState([]);
@@ -258,84 +257,7 @@ const NoteApp = () => {
   ];
 
   return (
-    <div className="flex h-screen bg-[#D0D4D8] overflow-hidden text-base text-[#545453]">
-      {/* ===== LEFT SIDEBAR ===== */}
-      <div className="w-64 bg-[#C0C7CC] border-r border-[#A8B0B5] p-5 flex flex-col">
-        {/* Workspace Header */}
-        <div className="flex items-center justify-between mb-8 px-2">
-          <div>
-            <h2 className="text-2xl font-semibold text-[#545453] tracking-tight">My Workspace</h2>
-            <p className="text-base text-[#6E777B] mt-0.5">Personal</p>
-          </div>
-        </div>
-
-        {/* Main Menu Section */}
-        <div className="mb-6">
-          <p className="text-sm font-semibold text-[#6E777B] uppercase tracking-[0.14em] mb-3 px-2">Menu</p>
-          <nav className="space-y-1.5">
-            {mainMenuItems.map((item, idx) => {
-              const Icon = item.icon;
-              const isActive = activeSidebarItem === item.key;
-              return (
-                <motion.button
-                  key={idx}
-                  onClick={() => handlePageSwitch(item.page, item.key)}
-                  whileHover={{ x: isActive ? 0 : 3 }}
-                  whileTap={{ scale: 0.98 }}
-                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${
-                    isActive
-                      ? 'bg-[#E7EAEC] text-[#545453] shadow-sm ring-1 ring-[#A8B0B5]'
-                      : 'text-[#6E777B] hover:bg-[#D0D4D8] hover:text-[#545453]'
-                  }`}
-                >
-                  <Icon size={18} strokeWidth={1.9} />
-                  <span className="text-base font-medium">{item.label}</span>
-                </motion.button>
-              );
-            })}
-          </nav>
-        </div>
-
-        {/* Workspace Section */}
-        <div className="mb-6 flex-1">
-          <p className="text-sm font-semibold text-[#6E777B] uppercase tracking-[0.14em] mb-3 px-2">Workspace</p>
-          <nav className="space-y-1.5">
-            {workspaceItems.map((item, idx) => {
-              const Icon = item.icon;
-              const isActive = activeSidebarItem === item.key;
-              return (
-                <motion.button
-                  key={idx}
-                  onClick={() => handlePageSwitch(item.page, item.key)}
-                  whileHover={{ x: isActive ? 0 : 3 }}
-                  whileTap={{ scale: 0.98 }}
-                  className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all ${
-                    isActive
-                      ? 'bg-[#E7EAEC] text-[#545453] shadow-sm ring-1 ring-[#A8B0B5]'
-                      : 'text-[#6E777B] hover:bg-[#D0D4D8] hover:text-[#545453]'
-                  }`}
-                >
-                  <Icon size={18} strokeWidth={1.9} />
-                  <span className="text-base font-medium">{item.label}</span>
-                </motion.button>
-              );
-            })}
-          </nav>
-        </div>
-
-        {/* New Page Button */}
-        <motion.button 
-          onClick={handleNewNote}
-          whileHover={{ scale: 1.15 }}
-          whileTap={{ scale: 0.9 }}
-          className="w-11 h-11 mx-auto rounded-full bg-[#545453] text-[#E7EAEC] flex items-center justify-center hover:bg-[#6A7276] transition-colors"
-          title="New Note"
-          aria-label="New Note"
-        >
-          <Plus size={18} strokeWidth={2} />
-        </motion.button>
-      </div>
-
+    <div className="flex h-screen bg-[#E7EAEC] overflow-hidden text-base text-[#545453]">
       {/* Conditional rendering based on active page */}
       {activePage === 'music' ? (
         <div className="flex-1 bg-[#E7EAEC] p-8 overflow-hidden">
@@ -348,7 +270,7 @@ const NoteApp = () => {
       ) : (
         <>
           {/* ===== MIDDLE COLUMN ===== */}
-          <div className="w-80 bg-[#E7EAEC] border-r border-[#A8B0B5] flex flex-col p-4">
+          <div className="w-80 bg-white border-r border-[#D0D4D8] flex flex-col p-4">
         {/* Search Bar */}
         <div className="mb-6">
           <div className="relative">

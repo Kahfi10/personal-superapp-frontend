@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { useState } from 'react';
 import { motion as Motion, AnimatePresence } from 'framer-motion';
 import {
@@ -16,7 +16,7 @@ import MusicLibrary from './MusicLibrary';
 import PhotoAlbumLibrary from './PhotoAlbumLibrary';
 
 function App() {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const navItems = [
     { id: 'home', label: 'Dashboard', path: '/', icon: Home },
@@ -45,16 +45,14 @@ function App() {
               {navItems.map((item) => {
                 const IconComponent = item.icon;
                 return (
-                  <Motion.a
+                  <Link
                     key={item.id}
-                    href={item.path}
-                    whileHover={{ x: 8, transition: { type: 'spring', stiffness: 400, damping: 12 } }}
-                    whileTap={{ scale: 0.96 }}
-                    className="flex items-center gap-3 px-4 py-3 rounded-lg text-[#545453] hover:bg-[#D0D4D8] transition-all group"
+                    to={item.path}
+                    className="flex items-center gap-3 px-4 py-3 rounded-lg text-[#545453] hover:bg-[#D0D4D8] transition-all group no-underline"
                   >
                     <IconComponent size={20} className="group-hover:text-blue-600" />
                     <span className="font-medium">{item.label}</span>
-                  </Motion.a>
+                  </Link>
                 );
               })}
             </nav>
@@ -100,17 +98,15 @@ function App() {
                     {navItems.map((item) => {
                       const IconComponent = item.icon;
                       return (
-                        <Motion.a
+                        <Link
                           key={item.id}
-                          href={item.path}
+                          to={item.path}
                           onClick={() => setSidebarOpen(false)}
-                          whileHover={{ x: 8, transition: { type: 'spring', stiffness: 400, damping: 12 } }}
-                          whileTap={{ scale: 0.96 }}
-                          className="flex items-center gap-3 px-4 py-3 rounded-lg text-[#545453] hover:bg-[#D0D4D8] transition-all group"
+                          className="flex items-center gap-3 px-4 py-3 rounded-lg text-[#545453] hover:bg-[#D0D4D8] transition-all group no-underline"
                         >
                           <IconComponent size={20} className="group-hover:text-blue-600" />
                           <span className="font-medium">{item.label}</span>
-                        </Motion.a>
+                        </Link>
                       );
                     })}
                   </nav>
