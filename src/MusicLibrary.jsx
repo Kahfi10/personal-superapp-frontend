@@ -1,7 +1,7 @@
 
 
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import {
   Music,
   Play,
@@ -19,8 +19,8 @@ const GO_API_BASE = 'http://localhost:8080';
 
 const MusicLibrary = () => {
   const [songs, setSongs] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [showUploadForm, setShowUploadForm] = useState(false);
+  const [loading] = useState(false);
   const [currentSong, setCurrentSong] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioElement] = useState(new Audio());
@@ -106,7 +106,7 @@ const MusicLibrary = () => {
   }, [audioElement]);
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full w-full flex flex-col p-8">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>

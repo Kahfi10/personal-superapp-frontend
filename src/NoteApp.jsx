@@ -1,22 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import {
-  Home,
   Search as SearchIcon,
   Plus,
   Pencil,
-  Bell,
-  Settings,
   Trash2,
-  Archive,
-  Share2,
-  Users,
   MoreVertical,
-  Type,
   Loader2,
-  Music,
-  Image as ImageIcon,
 } from 'lucide-react';
 import MusicLibrary from './MusicLibrary';
 import PhotoAlbumLibrary from './PhotoAlbumLibrary';
@@ -26,7 +17,6 @@ const API_BASE_URL = 'http://localhost:8000';
 
 const NoteApp = () => {
   const [activeCard, setActiveCard] = useState(null);
-  const [activePage, setActivePage] = useState('notes'); // 'notes', 'music', 'photos'
   const [searchQuery, setSearchQuery] = useState('');
   const [notes, setNotes] = useState([]);
   const [loadingNotes, setLoadingNotes] = useState(true);
@@ -227,50 +217,10 @@ const NoteApp = () => {
     note.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Handle page switching
-  const handlePageSwitch = (page, sidebarKey) => {
-    setActivePage(page);
-    setActiveSidebarItem(sidebarKey);
-    // Reset note states when switching pages
-    if (page !== 'notes') {
-      setActiveCard(null);
-      setShowNewNoteForm(false);
-      setShowEditNoteForm(false);
-    }
-  };
-
-  // Sidebar menu items
-  const mainMenuItems = [
-    { key: 'home', icon: Home, label: 'Home', page: 'notes' },
-    { key: 'music', icon: Music, label: 'Music Library', page: 'music' },
-    { key: 'photos', icon: ImageIcon, label: 'Photo Album', page: 'photos' },
-    { key: 'search', icon: SearchIcon, label: 'Search', page: 'notes' },
-    { key: 'updates', icon: Bell, label: 'Updates', page: 'notes' },
-  ];
-
-  const workspaceItems = [
-    { key: 'workspace', icon: Users, label: 'Workspace', page: 'notes' },
-    { key: 'shared', icon: Share2, label: 'Shared', page: 'notes' },
-    { key: 'archive', icon: Archive, label: 'Archive', page: 'notes' },
-    { key: 'trash', icon: Trash2, label: 'Trash', page: 'notes' },
-    { key: 'settings', icon: Settings, label: 'Settings', page: 'notes' },
-  ];
-
   return (
-    <div className="flex h-screen bg-[#E7EAEC] overflow-hidden text-base text-[#545453]">
-      {/* Conditional rendering based on active page */}
-      {activePage === 'music' ? (
-        <div className="flex-1 bg-[#E7EAEC] p-8 overflow-hidden">
-          <MusicLibrary />
-        </div>
-      ) : activePage === 'photos' ? (
-        <div className="flex-1 bg-[#E7EAEC] p-8 overflow-hidden">
-          <PhotoAlbumLibrary />
-        </div>
-      ) : (
-        <>
-          {/* ===== MIDDLE COLUMN ===== */}
-          <div className="w-80 bg-white border-r border-[#D0D4D8] flex flex-col p-4">
+    <div className="flex w-full h-full bg-[#E7EAEC] overflow-hidden text-base text-[#545453]">
+      {/* ===== MIDDLE COLUMN ===== */}
+      <div className="w-80 bg-white border-r border-[#D0D4D8] flex flex-col p-4">
         {/* Search Bar */}
         <div className="mb-6">
           <div className="relative">
@@ -735,8 +685,6 @@ const NoteApp = () => {
         </div>
 
       </div>
-      </>
-      )}
     </div>
   );
 };

@@ -113,10 +113,10 @@ const Dashboard = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#E7EAEC] to-[#D0D4D8]">
+    <div className="w-full h-full flex flex-col">
       {/* Header */}
       <div className="bg-white shadow-sm border-b border-[#A8B0B5]">
-        <div className="max-w-7xl mx-auto px-6 py-6">
+        <div className="px-6 py-6">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-4xl font-bold text-[#545453]">My Workspace</h1>
@@ -135,7 +135,7 @@ const Dashboard = () => {
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-6 py-12">
+      <div className="flex-1 overflow-auto px-6 py-8">
         {/* Quick Stats */}
         <Motion.div
           className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12"

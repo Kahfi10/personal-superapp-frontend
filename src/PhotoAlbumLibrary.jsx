@@ -107,7 +107,7 @@ const PhotoAlbumLibrary = () => {
   };
 
   return (
-    <div className="h-full flex flex-col">
+    <div className="h-full w-full flex flex-col p-8">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
