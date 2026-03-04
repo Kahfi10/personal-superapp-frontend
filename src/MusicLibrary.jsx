@@ -1,7 +1,8 @@
 
 
 import React, { useState, useEffect } from 'react';
-import { AnimatePresence } from 'framer-motion';
+// eslint-disable-next-line no-unused-vars
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Music,
   Play,
@@ -32,18 +33,31 @@ const MusicLibrary = () => {
   const [uploading, setUploading] = useState(false);
   const [uploadMessage, setUploadMessage] = useState('');
 
-  // Sample songs (karena API belum sepenuhnya siap)
+  // Fetch songs from API
   useEffect(() => {
-    // Untuk sementara gunakan dummy data
-    setSongs([
-      {
-        id: 1,
-        title: 'Boat To Sail',
-        artist: 'Unknown Artist',
-        file_url: '/media/songs/Boat To Sail.mp3',
-      },
-    ]);
+    fetchSongs();
   }, []);
+
+  const fetchSongs = async () => {
+    try {
+      const response = await fetch(`${GO_API_BASE}/songs`);
+      if (response.ok) {
+        const data = await response.json();
+        setSongs(data.songs || []);
+      }
+    } catch (error) {
+      console.error('Error fetching songs:', error);
+      // Fallback to dummy data if API fails
+      setSongs([
+        {
+          id: 1,
+          title: 'Boat To Sail',
+          artist: 'Unknown Artist',
+          file_url: '/media/songs/Boat To Sail.mp3',
+        },
+      ]);
+    }
+  };
 
   const handleUpload = async (e) => {
     e.preventDefault();
@@ -68,13 +82,18 @@ const MusicLibrary = () => {
         setUploadTitle('');
         setUploadArtist('');
         setUploadFile(null);
+        
+        // Refresh songs list
+        await fetchSongs();
 
         setTimeout(() => {
           setShowUploadForm(false);
           setUploadMessage('');
         }, 2000);
       } else {
-        setUploadMessage('Gagal upload lagu');
+        const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+        setUploadMessage('Gagal upload lagu: ' + (errorData.error || response.statusText));
+        console.error('Upload error:', errorData);
       }
     } catch (error) {
       setUploadMessage('Error: ' + error.message);

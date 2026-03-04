@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { AnimatePresence } from 'framer-motion';
+// eslint-disable-next-line no-unused-vars
+import { motion, AnimatePresence } from 'framer-motion';
 import {
   Search as SearchIcon,
   Plus,
@@ -9,8 +10,6 @@ import {
   MoreVertical,
   Loader2,
 } from 'lucide-react';
-import MusicLibrary from './MusicLibrary';
-import PhotoAlbumLibrary from './PhotoAlbumLibrary';
 
 // API Base URL
 const API_BASE_URL = 'http://localhost:8000';

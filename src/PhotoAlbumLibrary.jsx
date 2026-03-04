@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Image as ImageIcon,
@@ -14,7 +15,7 @@ const GO_API_BASE = 'http://localhost:8080';
 
 const PhotoAlbumLibrary = () => {
   const [photos, setPhotos] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading] = useState(false);
   const [showUploadForm, setShowUploadForm] = useState(false);
   const [selectedPhoto, setSelectedPhoto] = useState(null);
 
@@ -80,14 +81,17 @@ const PhotoAlbumLibrary = () => {
     formData.append('image', uploadFile);
 
     try {
-      // Uncomment ketika API sudah siap
-      // const response = await fetch(`${GO_API_BASE}/photos`, {
-      //   method: 'POST',
-      //   body: formData,
-      // });
-
-      // Simulasi upload (untuk sementara)
+      // Simulasi upload dan simpan ke local state
       await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      // Add new photo to the list with preview URL
+      const newPhoto = {
+        id: Date.now(),
+        title: uploadTitle,
+        description: uploadDescription,
+        file_url: previewUrl,
+      };
+      setPhotos([newPhoto, ...photos]);
 
       setUploadMessage('Photo berhasil diupload!');
       setUploadTitle('');
